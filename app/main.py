@@ -69,6 +69,10 @@ def index(request: Request):
 
 # Signature verification
 def verify_signature(message, key, signature):
+    # Missing header or unset secret: reject (401) instead of raising a 500
+    if not signature or not key:
+        return False
+
     digest = hmac.new(key, msg=message, digestmod=hashlib.sha256).hexdigest()
 
     return hmac.compare_digest(digest, signature)
